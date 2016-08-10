@@ -1,0 +1,189 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:weightSum="1"
+    tools:context="com.asiawaters.fieldapprover.LoginActivity">
+
+    <!-- Login progress -->
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:visibility="gone" />
+
+    <View
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
+
+    <LinearLayout
+        android:id="@+id/email_login_form"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"
+        android:background="@drawable/welcome_box_white"
+        android:orientation="vertical"
+        android:padding="@dimen/_10sdp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/splash_screen_label"
+            android:textSize="22sp"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_centerHorizontal="true"
+            android:text="@string/app_name"
+            android:singleLine="true"/>
+
+        <View
+            android:id="@+id/splash_screen_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/splash_screen_label"
+            android:layout_marginTop="4dp"
+            android:background="@color/colorPrimaryDark"
+            />
+
+        <AutoCompleteTextView
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_login"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password"
+            android:imeActionId="@+id/login"
+            android:imeActionLabel="@string/action_sign_in_short"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+
+        <Button
+            android:id="@+id/email_sign_in_button"
+            style="?android:textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginLeft="@dimen/_46sdp"
+            android:layout_marginRight="@dimen/_46sdp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/welcome_box_green"
+            android:text="@string/action_sign_in"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/HelpText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_26sdp"
+            android:layout_marginRight="@dimen/_26sdp"
+            android:gravity="center" />
+
+        <View
+            android:layout_width="0px"
+            android:layout_height="8dp" />
+
+        <Button
+            android:id="@+id/showSettings"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/Settings" />
+
+        <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+            android:id="@+id/expandableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible"
+            app:ael_duration="500"
+            app:ael_expanded="false"
+            app:ael_interpolator="bounce"
+            app:ael_orientation="vertical">
+
+
+            <CheckBox
+                android:id="@+id/chSave"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:checked="true"
+                android:text="@string/SaveLogin" />
+
+            <ImageView
+                android:id="@+id/dtaPiker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/chSave"
+                android:background="@drawable/date_picker"
+                android:onClick="showDatePickerDialog"
+                android:layout_alignRight="@+id/URLPath"
+                android:paddingRight="8dp"/>
+
+            <EditText
+                android:id="@+id/DataFrom"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/chSave"
+                android:hint="@string/dateFrom"
+                android:inputType="date"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_marginRight="48dp"/>
+
+            <ImageView
+                android:id="@+id/dtaPiker1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/DataFrom"
+                android:background="@drawable/date_picker"
+                android:onClick="showDatePickerDialog"
+                android:layout_alignRight="@+id/URLPath"
+                android:paddingRight="8dp" />
+
+            <EditText
+                android:id="@+id/DateTo"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/DataFrom"
+                android:hint="@string/dateTo"
+                android:inputType="date"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:layout_marginRight="48dp"/>
+
+            <EditText
+                android:id="@+id/URLPath"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@id/DateTo"
+                android:hint="@string/URL"
+                android:inputType="textUri" />
+
+
+        </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="0.1" />
+
+</LinearLayout>

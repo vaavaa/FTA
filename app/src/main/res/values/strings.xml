@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">FTA</string>
+
+    <!-- LoginActivity -->
+    <string name="login">Login is not valid</string>
+    <string name="password">Password is not valid</string>
+    <string name="WrongDate">Date is not valid.  Date format is dd.MM.yyyy</string>
+    <string name="Internet_is_not_available">Internet is not available</string>
+    <string name="Connection_is_switched_off">Connection is switched off. Pls. switch on the connection</string>
+    <string name="LoggingIn">Logging in...</string>
+    <string name="Updating">Updating...</string>
+    <string name="ServerIsNotResponding">Server didn\'t send a respond. Try ones again.</string>
+    <string name="UserNotFind">Such user\'s name is not find.</string>
+    <string name="prompt_login">Login</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="Settings">Settings</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="SaveLogin">Save login and password</string>
+
+    <string name="dateFrom">Date from</string>
+    <string name="dateTo">Date to</string>
+    <string name="URL">Server path</string>
+
+
+</resources>
