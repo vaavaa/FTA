@@ -1,16 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.asiawaters.fta.MainActivity">
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:id="@+id/coordinatorLayout"
+    tools:context=".MainActivity">
 
-    <TextView
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
-</RelativeLayout>
+        android:layout_gravity="end|bottom"
+        android:layout_margin="8dp"
+        android:src="@drawable/fab_add"
+        app:menu_labels_colorNormal="@color/app_primary"
+        app:menu_labels_colorPressed="@color/app_primary_pressed"
+        app:menu_labels_colorRipple="@color/app_ripple"
+        app:menu_colorNormal="@color/app_primary"
+        app:menu_colorPressed="@color/app_primary_pressed"
+        app:menu_colorRipple="@color/app_ripple"
+        app:layout_behavior="com.asiawaters.fta.classes.FloatingActionMenuBehavior">
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/find_outlet"
+            app:fab_size="mini"
+            app:fab_label="@string/find_outlet"
+            app:fab_colorNormal="@color/app_primary"
+            app:fab_colorPressed="@color/app_primary_pressed"
+            app:fab_colorRipple="@color/app_ripple"
+            android:onClick="add_person"/>
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/menu_item1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/outlet_task_copy"
+            app:fab_size="mini"
+            app:fab_label="@string/outlet_task_copy"
+            app:fab_colorNormal="@color/app_primary"
+            app:fab_colorPressed="@color/app_primary_pressed"
+            app:fab_colorRipple="@color/app_ripple"
+            android:onClick="add_phone"/>
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.design.widget.CoordinatorLayout>

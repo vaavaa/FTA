@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.asiawaters.fieldapprover.MainActivity">
+    <item
+        android:id="@+id/menu_asc"
+        android:orderInCategory="110"
+        android:title="@string/asc"
+        android:icon="@drawable/ic_sort_asc"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_desc"
+        android:orderInCategory="100"
+        android:title="@string/desc"
+        android:icon="@drawable/ic_sort_desc"
+        app:showAsAction="always" />
+</menu>

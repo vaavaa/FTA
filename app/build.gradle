@@ -18,9 +18,7 @@ android {
         }
         repositories {
             maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases' }
-        }
-        repositories {
-            jcenter()
+            maven { url 'https://jcenter.bintray.com'}
         }
     }
 }
@@ -35,4 +33,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'de.codecrafters.tableview:tableview:2.1.0'
     compile 'com.github.aakira:expandable-layout:1.5.1@aar'
+    compile 'com.github.clans:fab:1.6.2'
 }

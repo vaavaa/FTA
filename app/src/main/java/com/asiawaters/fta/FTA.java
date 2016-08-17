@@ -18,7 +18,7 @@ public class FTA extends Application {
     private Model_ListMembers[] list_values;
     private String path_url = "http://ws.asiawaters.com/ast2/ws/Mobile";
     private DBController db;
-    private int timeOut = 60000;
+    private int timeOut = 80000;
     private int idGroup = -1;
     private int idPosition = -1;
     private Date DateFrom;

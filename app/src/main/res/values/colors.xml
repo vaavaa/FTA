@@ -9,4 +9,8 @@
     <color name = "transparent">#00000000</color>
     <color name="white">#FFFFFF</color>
     <color name="groupcolor">#AFD3EA</color>
+    <color name="app_primary">#4bb92c</color>
+    <color name="app_primary_pressed">#388b22</color>
+    <color name="app_ripple">#34801f</color>
+    <color name="map_bg">#145de138</color>
 </resources>

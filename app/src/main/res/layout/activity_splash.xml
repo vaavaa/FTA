@@ -34,7 +34,4 @@
         android:padding="@dimen/_25sdp"
         android:layout_below="@id/splash_screen_line"/>
 
-
-
-
 </RelativeLayout>

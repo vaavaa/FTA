@@ -3,37 +3,38 @@ package com.asiawaters.fta.classes;
 import java.util.Date;
 
 public class Model_ListMembers {
-    private String NumberOfTask;
+    private String OutletName;
+    private String OutletAddress;
+    private String OutletAgent;
     private Date AppointmentDateOfTask;
-    private String TaskName;
-    private Date TargetDatesForTheTask;
-    private String GuidTask;
-    private boolean Active;
-    private String Template;
-    private boolean ActiveBP;
+    private Date InitialDateOfTask;
+    private Date Deadline;
+    private String IDTask;
+    private String TextProblem;
+    private boolean done;
 
-    public boolean isActiveBP() {
-        return ActiveBP;
+    public String getOutletName() {
+        return OutletName;
     }
 
-    public void setActiveBP(boolean activeBP) {
-        ActiveBP = activeBP;
+    public void setOutletName(String outletName) {
+        OutletName = outletName;
     }
 
-    public String getTemplate() {
-        return Template;
+    public String getOutletAddress() {
+        return OutletAddress;
     }
 
-    public void setTemplate(String template) {
-        Template = template;
+    public void setOutletAddress(String outletAddress) {
+        OutletAddress = outletAddress;
     }
 
-    public String getNumberOfTask() {
-        return NumberOfTask;
+    public String getOutletAgent() {
+        return OutletAgent;
     }
 
-    public void setNumberOfTask(String numberOfTask) {
-        NumberOfTask = numberOfTask;
+    public void setOutletAgent(String outletAgent) {
+        OutletAgent = outletAgent;
     }
 
     public Date getAppointmentDateOfTask() {
@@ -44,47 +45,58 @@ public class Model_ListMembers {
         AppointmentDateOfTask = appointmentDateOfTask;
     }
 
-    public String getTaskName() {
-        return TaskName;
+    public Date getInitialDateOfTask() {
+        return InitialDateOfTask;
     }
 
-    public void setTaskName(String taskName) {
-        TaskName = taskName;
+    public void setInitialDateOfTask(Date initialDateOfTask) {
+        InitialDateOfTask = initialDateOfTask;
     }
 
-    public Date getTargetDatesForTheTask() {
-        return TargetDatesForTheTask;
+    public Date getDeadline() {
+        return Deadline;
     }
 
-    public void setTargetDatesForTheTask(Date targetDatesForTheTask) {
-        TargetDatesForTheTask = targetDatesForTheTask;
+    public void setDeadline(Date deadline) {
+        Deadline = deadline;
     }
 
-    public String getGuidTask() {
-        return GuidTask;
+    public String getIDTask() {
+        return IDTask;
     }
 
-    public void setGuidTask(String guidTask) {
-        GuidTask = guidTask;
+    public void setIDTask(String IDTask) {
+        this.IDTask = IDTask;
     }
 
-    public boolean isActive() {
-        return Active;
+    public String getTextProblem() {
+        return TextProblem;
     }
 
-    public void setActive(boolean active) {
-        Active = active;
+    public void setTextProblem(String textProblem) {
+        TextProblem = textProblem;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
+    public void setDone(boolean done) {
+        this.done = done;
     }
 
     @Override
     public String toString() {
-        return "ListMembers{" +
-                "NumberOfTask='" + NumberOfTask + '\'' +
+        return "Model_ListMembers{" +
+                "OutletName='" + OutletName + '\'' +
+                ", OutletAddress='" + OutletAddress + '\'' +
+                ", OutletAgent='" + OutletAgent + '\'' +
                 ", AppointmentDateOfTask=" + AppointmentDateOfTask +
-                ", TaskName='" + TaskName + '\'' +
-                ", TargetDatesForTheTask=" + TargetDatesForTheTask +
-                ", GuidTask='" + GuidTask + '\'' +
-                ", Active=" + Active +
+                ", InitialDateOfTask=" + InitialDateOfTask +
+                ", Deadline=" + Deadline +
+                ", IDTask='" + IDTask + '\'' +
+                ", TextProblem='" + TextProblem + '\'' +
+                ", done=" + done +
                 '}';
     }
 }

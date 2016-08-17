@@ -57,7 +57,7 @@ public class Network_Helper {
 
         ArrayList headerProperty = new ArrayList();
         headerProperty.add(new HeaderProperty("Authorization", "Basic " +
-                org.kobjects.base64.Base64.encode(("ws_connection:123").getBytes())));
+                org.kobjects.base64.Base64.encode(("ws_connection:kmwaqua").getBytes())));
 
 
         try {

@@ -17,10 +17,20 @@
     <string name="Settings">Settings</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="SaveLogin">Save login and password</string>
-
     <string name="dateFrom">Date from</string>
     <string name="dateTo">Date to</string>
     <string name="URL">Server path</string>
+
+    <!-- MainActivity -->
+    <string name="timeout">Response timeout is over</string>
+    <string name="find_outlet">Search outlet</string>
+    <string name="outlet_task_copy">New task based on selection</string>
+    <string name="asc">Asc</string>
+    <string name="desc">Desc</string>
+    <string name="label_outlet_name">Outlet name:</string>
+    <string name="label_agent_name">Agent name:</string>
+    <string name="label_outlet_address">Outlet address:</string>
+
 
 
 </resources>
