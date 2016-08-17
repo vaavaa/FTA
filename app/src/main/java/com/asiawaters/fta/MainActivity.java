@@ -320,6 +320,8 @@ public class MainActivity extends AppCompatActivity {
                 listMembers.setTextProblem(pii.getProperty("TextProblem").toString());
                 //Ид задачи
                 listMembers.setIDTask(pii.getProperty("IDTask").toString());
+
+                listMembers.setOutletAgent(pii.getProperty("Agent").toString());
                 //Время когда завершить
                 SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 try {

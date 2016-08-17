@@ -7,10 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.asiawaters.fta.R;
 
+import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
         TextView AgentName;
         TextView DeadLine;
         TextView OutletAddress;
-        ImageView info;
+        LinearLayout list_row;
     }
 
 
@@ -43,25 +45,19 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
     public void onClick(View v) {
 
 
-        int position=(Integer) v.getTag();
+        int position=(Integer) v.findViewById(R.id.taskname).getTag();;
         Object object= getItem(position);
         Model_ListMembers dataModel=(Model_ListMembers)object;
 
 
 
 
-//        switch (v.getId())
-//        {
-//
-//            case R.id.item_info:
-//
-//                Snackbar.make(v, "Release date " +dataModel.getAppointmentDateOfTask(), Snackbar.LENGTH_LONG)
-//                        .setAction("No action", null).show();
-//
-//                break;
-//
-//
-//        }
+
+
+                Snackbar.make(v, "Release date " +dataModel.getAppointmentDateOfTask(), Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+
+
 
 
     }
@@ -88,6 +84,7 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
             viewHolder.AgentName = (TextView) convertView.findViewById(R.id.AgentName);
             viewHolder.DeadLine = (TextView) convertView.findViewById(R.id.DeadLine);
             viewHolder.OutletAddress = (TextView) convertView.findViewById(R.id.OutletAddress);
+            viewHolder.list_row = (LinearLayout) convertView;
 
             convertView.setTag(viewHolder);
         } else {
@@ -104,8 +101,8 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
 
         SimpleDateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
         viewHolder.DeadLine.setText(date_format.format(dataModel.getDeadline()));
-//        viewHolder.info.setOnClickListener(this);
-//        viewHolder.info.setTag(position);
+        viewHolder.list_row.setOnClickListener(this);
+        viewHolder.TaskName.setTag(position);
         // Return the completed view to render on screen
         return convertView;
     }
