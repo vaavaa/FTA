@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -56,6 +57,8 @@ public class SearchActivity extends AppCompatActivity {
     private ListAdapter listAdapter;
     private ListView expListView;
     private ArrayList<ModelSearchedOutlets> listData;
+    private Handler TimerHandler = new Handler();
+    private String[] InputValues = {"", ""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +86,7 @@ public class SearchActivity extends AppCompatActivity {
         // specify the minimum type of characters before drop-down list is shown
         //needs 10 for cancel automotive show
         actv.setThreshold(250);
-        IV1 = (ImageView) findViewById(R.id.IV1);
+        IV1 = (ImageView) findViewById(R.id.IV1M);
         actv.setEnabled(false);
         IV1.setEnabled(false);
         actv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,7 +94,9 @@ public class SearchActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 ModelSearchedOutlets MSO = (ModelSearchedOutlets) adapterView.getItemAtPosition(position);
                 actv.setText(MSO.getName());
-                ((TextView)findViewById(R.id.search_search_address)).setText(MSO.getAddress());
+                ((TextView) findViewById(R.id.search_search_address)).setText(MSO.getAddress());
+                prepareListData_(MSO);
+                SetAdapterForListOutlets();
             }
         });
 
@@ -103,35 +108,18 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //Определяем когда запускать обновления списка подсказок
-                Calendar c = Calendar.getInstance();
-                c.get(Calendar.DATE);
-                long millisecond_now = c.getTimeInMillis();
-                if ((millisecond + 2500) < millisecond_now) {
-                    millisecond = c.getTimeInMillis();
-                    shouldAutoComplete = true;
-                } else shouldAutoComplete = false;
-
-
+                InputValues[1] = s.toString();
             }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                InputValues[0] = s.toString();
                 Calendar c = Calendar.getInstance();
-                if (millisecond==0) millisecond = c.getTimeInMillis();
+                millisecond = c.getTimeInMillis();
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (shouldAutoComplete) {
-                    ModelSearchOutletRequest MSOR = new ModelSearchOutletRequest();
-                    MSOR.setCount("10");
-                    MSOR.setWord("%" + actv.getText().toString() + "%");
-                    String guid = getGuidofRegion(((ModelRegions) spnr.getSelectedItem()).getName());
-                    MSOR.setGUIDOrganization(guid);
-                    MSOR.setListCode(1);
-                    new GetAutoSuggestionsTask().execute(MSOR);
-                }
             }
 
         });
@@ -161,6 +149,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
         );
 
+        TimerHandler.postDelayed(TimerResult, 1500);
     }
 
     @Override
@@ -229,9 +218,11 @@ public class SearchActivity extends AppCompatActivity {
                 //Guid точки
                 MO.setGUID(pii.getProperty("GUID").toString());
                 //Имя точки
-                MO.setName(pii.getProperty("Name").toString());
+                if (pii.getProperty("Name").toString().equals("anyType{}")) MO.setName("");
+                else MO.setName(pii.getProperty("Name").toString());
                 //Адресс точки
-                MO.setAddress(pii.getProperty("Address").toString());
+                if (pii.getProperty("Address").toString().equals("anyType{}")) MO.setAddress("");
+                else MO.setAddress(pii.getProperty("Address").toString());
                 lms[i] = MO;
             }
         }
@@ -409,15 +400,6 @@ public class SearchActivity extends AppCompatActivity {
         protected void onPreExecute() {
             this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingOutlets));
             this.dialog.show();
-            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    //In case of progress cancel we exit from activity
-                    actv.setText("");
-                }
-            });
-
-
         }
 
         protected Integer doInBackground(ModelSearchOutletRequest... passing) {
@@ -468,6 +450,35 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+    public void prepareListData_(ModelSearchedOutlets mso) {
+        ModelSearchedOutletsArr = new ModelSearchedOutlets[1];
+        ModelSearchedOutletsArr[0] = mso;
+        InputValues[0] = InputValues[1];
+    }
+
     public void startNextActivity() {
     }
+
+    private Runnable TimerResult = new Runnable() {
+        @Override
+        public void run() {
+            Calendar c = Calendar.getInstance();
+            long millisecond_updated = c.getTimeInMillis();
+            if (!InputValues[1].equals(InputValues[0])) {
+                if (millisecond_updated > (millisecond + 2000)) {
+                    ModelSearchOutletRequest MSOR = new ModelSearchOutletRequest();
+                    MSOR.setCount("10");
+                    MSOR.setWord("%" + actv.getText().toString() + "%");
+                    String guid = getGuidofRegion(((ModelRegions) spnr.getSelectedItem()).getName());
+                    MSOR.setGUIDOrganization(guid);
+                    MSOR.setListCode(1);
+                    new GetAutoSuggestionsTask().execute(MSOR);
+                    millisecond = millisecond_updated;
+                    InputValues[0] = InputValues[1];
+                }
+            } else millisecond = millisecond_updated;
+
+            TimerHandler.postDelayed(this, 500);
+        }
+    };
 }

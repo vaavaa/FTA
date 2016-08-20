@@ -27,12 +27,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp">
+        <ImageView
+            android:id="@+id/IV1M"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_action_search"
+            android:onClick="search_void_Outlets" />
 
         <RelativeLayout
             android:id="@+id/search_lines"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_toStartOf="@id/IV1M">
 
             <AutoCompleteTextView
                 android:id="@+id/search_search"
@@ -53,14 +61,7 @@
                 android:background="@drawable/welcome_box_white_edit"/>
         </RelativeLayout>
 
-        <ImageView
-            android:id="@+id/IV1"
-            android:layout_alignRight="@+id/search_lines"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/ic_action_search"
-            android:onClick="search_void_Outlets" />
+
 
     </RelativeLayout>
 
