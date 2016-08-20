@@ -28,7 +28,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/state"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:layout_marginRight="95dp"/>
 
         <TextView
             android:id="@+id/DeadLine"
@@ -46,7 +47,7 @@
             android:layout_toLeftOf="@id/DeadLine"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
-            android:src="@drawable/calendar_black" />
+            android:src="@drawable/calendar_yellow" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -119,16 +120,6 @@
             android:paddingLeft="1dp"
             android:paddingRight="4dp"
             android:textColor="@android:color/black" />
-
-        <ImageView
-            android:id="@+id/calendar_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:paddingLeft="4dp"
-            android:paddingRight="4dp"
-            android:src="@drawable/calendar_yellow" />
 
     </RelativeLayout>
 

@@ -121,34 +121,18 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.IV2).setSelected(false);
         if (lst != null) {
             prepareListData_();
-            listAdapter = new TaskListAdapter(listData,getBaseContext());
+            listAdapter = new TaskListAdapter(listData, getBaseContext(), this);
             // setting list adapter
             expListView.setAdapter(listAdapter);
         }
 
     }
 
-
-    public HashMap<String, List<String>> sortMap(HashMap<String, List<String>> unsortMap, int order) {
-        List<HashMap.Entry<String, List<String>>> list = new LinkedList<HashMap.Entry<String, List<String>>>(unsortMap.entrySet());
-        final int f_order = order;
-        // put sorted list into map again
-        HashMap<String, List<String>> sortedMap = new LinkedHashMap<String, List<String>>();
-        for (Iterator<Map.Entry<String, List<String>>> it = list.iterator(); it.hasNext(); ) {
-            Map.Entry<String, List<String>> entry = it.next();
-
-            List<String> lstr = entry.getValue();
-            Collections.sort(lstr, new Comparator<String>() {
-                @SuppressWarnings("unchecked")
-                public int compare(String s1, String s2) {
-                    if (f_order > 0) return s1.compareTo(s2);
-                    else return s2.compareTo(s1);
-                }
-            });
-            entry.setValue(lstr);
-            sortedMap.put(entry.getKey(), entry.getValue());
-        }
-        return sortedMap;
+    public void new_task(View v) {
+        this.finish();
+        Intent intent;
+        intent = new Intent(getApplicationContext(), SearchActivity.class);
+        startActivity(intent);
     }
 
     public void prepareListData_() {
@@ -176,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     public void GetNextStep(int groupPosition, int position) {
 
         //String GUIDObject = listDataChild.get(listDataHeader.get(groupPosition)).get(position);
-      //  FTA.setListMembers(findMember(GUIDObject));
+        //  FTA.setListMembers(findMember(GUIDObject));
         startNextActivity();
     }
 
@@ -242,8 +226,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void startNextActivity() {
         this.finish();
-        //Intent intent = new Intent(getApplicationContext(), DetailsActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(getApplicationContext(), FormActivity.class);
+        startActivity(intent);
     }
 
     private boolean doLogin(String user_id, String password, String guid) {

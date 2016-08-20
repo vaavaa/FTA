@@ -3,6 +3,7 @@ package com.asiawaters.fta;
 import android.app.Application;
 
 import com.asiawaters.fta.classes.DBController;
+import com.asiawaters.fta.classes.ModelRegions;
 import com.asiawaters.fta.classes.Model_ListMembers;
 import com.asiawaters.fta.classes.Model_NetState;
 import com.asiawaters.fta.classes.Model_Person;
@@ -26,6 +27,24 @@ public class FTA extends Application {
     private Boolean UpdateList = false;
     private String user;
     private String password;
+    private String TaskGuid;
+    private ModelRegions[] ModelRegionsArray;
+
+    public ModelRegions[] getModelRegionsArray() {
+        return ModelRegionsArray;
+    }
+
+    public void setModelRegionsArray(ModelRegions[] modelRegionsArray) {
+        ModelRegionsArray = modelRegionsArray;
+    }
+
+    public String getTaskGuid() {
+        return TaskGuid;
+    }
+
+    public void setTaskGuid(String taskGuid) {
+        TaskGuid = taskGuid;
+    }
 
     public String getUser() {
         return user;
@@ -65,14 +84,6 @@ public class FTA extends Application {
 
     public void setDateTo(Date dateTo) {
         DateTo = dateTo;
-    }
-
-    public int getIdGroup() {
-        return idGroup;
-    }
-
-    public void setIdGroup(int idGroup) {
-        this.idGroup = idGroup;
     }
 
     public int getIdPosition() {

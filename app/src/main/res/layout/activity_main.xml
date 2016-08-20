@@ -29,7 +29,7 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="right|bottom"
         android:layout_margin="8dp"
         android:src="@drawable/fab_add"
         app:menu_labels_colorNormal="@color/app_primary"
@@ -49,7 +49,7 @@
             app:fab_colorNormal="@color/app_primary"
             app:fab_colorPressed="@color/app_primary_pressed"
             app:fab_colorRipple="@color/app_ripple"
-            android:onClick="add_person"/>
+            android:onClick="new_task"/>
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_item1"
             android:layout_width="wrap_content"
@@ -59,8 +59,7 @@
             app:fab_label="@string/outlet_task_copy"
             app:fab_colorNormal="@color/app_primary"
             app:fab_colorPressed="@color/app_primary_pressed"
-            app:fab_colorRipple="@color/app_ripple"
-            android:onClick="add_phone"/>
+            app:fab_colorRipple="@color/app_ripple" />
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

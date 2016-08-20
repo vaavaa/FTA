@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape xmlns:android="http://schemas.android.com/apk/res/android">
-            <corners android:radius="10dip" />
+            <corners android:radius="2dip" />
             <solid android:color="@color/white" />
         </shape>
         </item>
@@ -11,7 +11,7 @@
             <stroke
                 android:width="1dp"
                 android:color="#0074BE" />
-            <corners android:radius="10dip" />
+            <corners android:radius="2dip" />
             <solid android:color="@color/map_bg" />
         </shape>
     </item>

@@ -1,0 +1,26 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_row_OutletSearch"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/map_bg"
+    android:orientation="vertical"
+    android:paddingBottom="4dp"
+    android:paddingLeft="2dp"
+    android:paddingRight="2dp"
+    android:paddingTop="4dp">
+
+    <TextView
+        android:id="@+id/listOutletName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/listOutletAdress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingRight="4dp"/>
+
+</LinearLayout>
+

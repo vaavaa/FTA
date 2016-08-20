@@ -23,14 +23,29 @@
 
     <!-- MainActivity -->
     <string name="timeout">Response timeout is over</string>
-    <string name="find_outlet">Search outlet</string>
+    <string name="find_outlet">Search outlet and add new task</string>
     <string name="outlet_task_copy">New task based on selection</string>
     <string name="asc">Asc</string>
     <string name="desc">Desc</string>
     <string name="label_outlet_name">Outlet name:</string>
     <string name="label_agent_name">Agent name:</string>
     <string name="label_outlet_address">Outlet address:</string>
+    <string name="label_open">Open</string>
+    <string name="title_activity_form">Task</string>
 
+    <!--FormActivity -->
+    <string name="LabelOutlet">Outlet</string>
+    <string name="LabelAgent">Agent</string>
+    <string name="TargetDate">Cutoff date</string>
+    <string name="InitialDate">Initial Date</string>
+    <string name="TaskDescription">Task description</string>
+    <string name="State">Task state</string>
+    <string name="Comments">Agent\'s comments</string>
+    <string name="Pictures">Pictures</string>
 
+    <!--SearchActivity -->
+    <string name="Search">Search outlet</string>
+    <string name="GetingOutlets">Getting outlets from region</string>
+    <string name="CreateNewTask">NewTask</string>
 
 </resources>
