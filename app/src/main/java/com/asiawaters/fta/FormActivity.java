@@ -7,12 +7,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.asiawaters.fta.classes.DatePickerFragment;
+import com.asiawaters.fta.classes.Model_NewTask;
 import com.asiawaters.fta.classes.Model_TaskListFields;
 import com.asiawaters.fta.classes.Model_TaskMember;
 
@@ -54,14 +59,90 @@ public class FormActivity extends AppCompatActivity {
 
         FTA = ((com.asiawaters.fta.FTA) getApplication());
         WDSLPath = FTA.getPath_url();
+        taskMembers = FTA.getTaskMember();
+        if (taskMembers != null) {
+            setUILock(false);
+            fillCommoninfo();
+        } else {
+            if (FTA.getTaskGuid() != null) {
+                setUILock(true);
+                new LoginTask().execute();
+            }
+        }
+    }
 
-        if (FTA.getTaskGuid() != null) new LoginTask().execute();
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_form, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_send) {
+            if (SendToServerCheck()) {
+                Model_NewTask MNT = new Model_NewTask();
+                MNT.setComment(((EditText) findViewById(R.id.task_description)).getText().toString());
+                MNT.setIDAuthor(FTA.getPerson().getPerson_guid());
+                MNT.setIDTradePoint(getValueByKey("OutletGUID"));
+                SimpleDateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
+                SimpleDateFormat date_format_SOAP = new SimpleDateFormat("yyyy-MM-dd");
+                String datesource = ((EditText) findViewById(R.id.deadline_field)).getText().toString();
+                String newDate_format="";
+                try {
+                    Date dta = date_format.parse(datesource);
+                    newDate_format = date_format_SOAP.format(dta);
+                }
+                catch (ParseException ex) {}
+                MNT.setTheTermOfTheTask(newDate_format);
+                FTA.setMNT(MNT);
+                new CreateTask().execute();
+            }
+            return true;
+        }
+
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
         previousActivity();
     }
+
+    public Boolean SendToServerCheck() {
+        if (((EditText) findViewById(R.id.task_description)).getText() == null) {
+            Toast.makeText(FormActivity.this, getResources().getString(R.string.NoTask), Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (((EditText) findViewById(R.id.task_description)).getText().length() == 0) {
+            Toast.makeText(FormActivity.this, getResources().getString(R.string.NoTask), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (((EditText) findViewById(R.id.deadline_field)).getText() == null) {
+            Toast.makeText(FormActivity.this, getResources().getString(R.string.NoCutOfDate), Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (((EditText) findViewById(R.id.deadline_field)).getText().length() == 0) {
+            Toast.makeText(FormActivity.this, getResources().getString(R.string.NoCutOfDate), Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            SimpleDateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
+            String d_vle = ((EditText) findViewById(R.id.deadline_field)).getText().toString();
+            Date Commitment_date = new Date();
+            Date curr_date = new Date();
+            try {
+                Commitment_date = date_format.parse(d_vle);
+            } catch (ParseException ex) {
+            }
+            if (Commitment_date.getTime() < curr_date.getTime()) {
+                Toast.makeText(FormActivity.this, getResources().getString(R.string.InvalidDate), Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public void previousActivity() {
         this.finish();
@@ -123,6 +204,60 @@ public class FormActivity extends AppCompatActivity {
                 result = true;
             }
 
+        } catch (SocketException ex) {
+            Log.e("Error : ", "Error on soapPrimitiveData() " + ex.getMessage());
+            ex.printStackTrace();
+        } catch (Exception e) {
+            Log.e("Error : ", "Error on soapPrimitiveData() " + e.getMessage());
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    private boolean doNewTask() {
+
+        String NAMESPACE = "Mobile";
+        String NAMESPACE1 = "http://www.asiawaters.com/wsdl/taskDealer";
+        String URL = WDSLPath;
+
+        boolean result = false;
+        final String SOAP_ACTION = "Mobile/MobilePortType/GetStatusRequest";
+        final String METHOD_NAME = "TaskDealer";
+        final String METHOD_NAME_M = "Object";
+        SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
+        SoapObject requestObj = new SoapObject(NAMESPACE, METHOD_NAME_M);
+        requestObj.addProperty(NAMESPACE1, "IDTradePoint", FTA.getMNT().getIDTradePoint());
+        requestObj.addProperty(NAMESPACE1, "Comment", FTA.getMNT().getComment());
+        requestObj.addProperty(NAMESPACE1, "IDAuthor", FTA.getMNT().getIDAuthor());
+        requestObj.addProperty(NAMESPACE1, "TheTermOfTheTask", FTA.getMNT().getTheTermOfTheTask());
+        request.addSoapObject(requestObj);
+
+
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
+        envelope.implicitTypes = true;
+        envelope.dotNet = false;
+
+        envelope.setOutputSoapObject(request);
+        System.out.println(request);
+
+        HttpTransportSE androidHttpTransport = new HttpTransportSE(URL);
+        androidHttpTransport.debug = true;
+
+        ArrayList headerProperty = new ArrayList();
+        headerProperty.add(new HeaderProperty("Authorization", "Basic " +
+                org.kobjects.base64.Base64.encode((FTA.getUser() + ":" + FTA.getPassword()).getBytes())));
+
+
+        try {
+            androidHttpTransport.call(SOAP_ACTION, envelope, headerProperty);
+            Log.d("dump Request: ", androidHttpTransport.requestDump);
+            Log.d("dump response: ", androidHttpTransport.responseDump);
+            String response = envelope.getResponse().toString();
+            System.out.println("response" + response);
+            if (response.length() > 0) {
+                result = true;
+            }
         } catch (SocketException ex) {
             Log.e("Error : ", "Error on soapPrimitiveData() " + ex.getMessage());
             ex.printStackTrace();
@@ -258,6 +393,17 @@ public class FormActivity extends AppCompatActivity {
 
     }
 
+    public void setUILock(boolean lock) {
+        if (lock) {
+            ((ImageView) findViewById(R.id.dtaPikerF)).setEnabled(false);
+        } else {
+            ((ImageView) findViewById(R.id.dtaPikerF)).setEnabled(true);
+            ((EditText) findViewById(R.id.task_description)).setFocusable(true);
+            ((EditText) findViewById(R.id.task_description)).setClickable(true);
+            ((EditText) findViewById(R.id.task_description)).setCursorVisible(true);
+            ((EditText) findViewById(R.id.task_description)).setFocusableInTouchMode(true);
+        }
+    }
 
     public void fillCommoninfo() {
 
@@ -266,7 +412,7 @@ public class FormActivity extends AppCompatActivity {
         SimpleDateFormat initial_date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         et = (EditText) findViewById(R.id.outlet);
-        et.setText(getValueByKey("Торговая точка").toString());
+        et.setText(getValueByKey("Торговая точка"));
 
         et = (EditText) findViewById(R.id.agent);
         et.setText(getValueByKey("Торговый агент").toString());
@@ -305,7 +451,7 @@ public class FormActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
 
-            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.LoggingIn));
+            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingTask));
             this.dialog.show();
 
         }
@@ -326,6 +472,36 @@ public class FormActivity extends AppCompatActivity {
                 if (taskMembers != null) {
                     fillCommoninfo();
                 }
+            }
+        }
+
+    }
+
+    private class CreateTask extends AsyncTask<Void, Void, Boolean> {
+
+        private final ProgressDialog dialog = new ProgressDialog(
+                FormActivity.this);
+
+        protected void onPreExecute() {
+
+            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingTask));
+            this.dialog.show();
+
+        }
+
+
+        protected Boolean doInBackground(final Void... unused) {
+
+            boolean auth = doNewTask();
+
+            return auth;
+        }
+
+
+        protected void onPostExecute(Void result) {
+            if (this.dialog.isShowing()) {
+                this.dialog.dismiss();
+                Toast.makeText(getBaseContext(), getBaseContext().getResources().getString(R.string.TasksSentOk), Toast.LENGTH_SHORT).show();
             }
         }
 

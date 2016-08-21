@@ -6,7 +6,9 @@ import com.asiawaters.fta.classes.DBController;
 import com.asiawaters.fta.classes.ModelRegions;
 import com.asiawaters.fta.classes.Model_ListMembers;
 import com.asiawaters.fta.classes.Model_NetState;
+import com.asiawaters.fta.classes.Model_NewTask;
 import com.asiawaters.fta.classes.Model_Person;
+import com.asiawaters.fta.classes.Model_TaskMember;
 import com.asiawaters.fta.classes.NetListener;
 
 import java.util.Date;
@@ -29,6 +31,24 @@ public class FTA extends Application {
     private String password;
     private String TaskGuid;
     private ModelRegions[] ModelRegionsArray;
+    private Model_TaskMember TaskMember;
+    private Model_NewTask MNT;
+
+    public Model_NewTask getMNT() {
+        return MNT;
+    }
+
+    public void setMNT(Model_NewTask MNT) {
+        this.MNT = MNT;
+    }
+
+    public Model_TaskMember getTaskMember() {
+        return TaskMember;
+    }
+
+    public void setTaskMember(Model_TaskMember taskMember) {
+        TaskMember = taskMember;
+    }
 
     public ModelRegions[] getModelRegionsArray() {
         return ModelRegionsArray;

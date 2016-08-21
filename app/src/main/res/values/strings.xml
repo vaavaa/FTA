@@ -42,10 +42,17 @@
     <string name="State">Task state</string>
     <string name="Comments">Agent\'s comments</string>
     <string name="Pictures">Pictures</string>
+    <string name="GetingTask">Geting task information</string>
+    <string name="NoTask">There is no value in task description.</string>
+    <string name="NoCutOfDate">There is no value in cutoff date.</string>
+    <string name="InvalidDate">Cutoff date needs to be higher then initial date</string>
+    <string name="TasksSentOk">Task sent successfully</string>
 
     <!--SearchActivity -->
     <string name="Search">Search outlet</string>
     <string name="GetingOutlets">Getting outlets from region</string>
+    <string name="GetingRegions">Getting regions</string>
     <string name="CreateNewTask">NewTask</string>
+    <string name="InitialStatusBP">Started</string>
 
 </resources>

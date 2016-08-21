@@ -27,6 +27,8 @@ import com.asiawaters.fta.classes.ModelRegions;
 import com.asiawaters.fta.classes.ModelSearchOutletRequest;
 import com.asiawaters.fta.classes.ModelSearchedOutlets;
 import com.asiawaters.fta.classes.Model_ListMembers;
+import com.asiawaters.fta.classes.Model_TaskListFields;
+import com.asiawaters.fta.classes.Model_TaskMember;
 import com.asiawaters.fta.classes.OutletListAdapter;
 import com.asiawaters.fta.classes.TaskListAdapter;
 
@@ -42,6 +44,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
@@ -171,6 +174,7 @@ public class SearchActivity extends AppCompatActivity {
 
     public void search_void_Outlets(View v) {
         if (actv.getText().length() > 0) {
+            InputValues[0] = InputValues[1];
             ModelSearchOutletRequest MSOR = new ModelSearchOutletRequest();
             MSOR.setCount("0");
             MSOR.setWord("%" + actv.getText().toString() + "%");
@@ -293,7 +297,7 @@ public class SearchActivity extends AppCompatActivity {
 
 
         protected void onPreExecute() {
-            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.Updating));
+            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingRegions));
             this.dialog.show();
             this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
@@ -427,12 +431,14 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void SetAdapterForAutoCompliteOutlets() {
-        ArrayAdapter<ModelSearchedOutlets> adapter =
-                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ModelSearchedOutletsArr);
-        actv.setAdapter(adapter);
-        actv.showDropDown();
-        Calendar c = Calendar.getInstance();
-        millisecond = c.getTimeInMillis() + 1500;
+        if (ModelSearchedOutletsArr!=null) {
+            ArrayAdapter<ModelSearchedOutlets> adapter =
+                    new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ModelSearchedOutletsArr);
+            actv.setAdapter(adapter);
+            actv.showDropDown();
+            Calendar c = Calendar.getInstance();
+            millisecond = c.getTimeInMillis() + 1200;
+        }
     }
 
     public void SetAdapterForListOutlets() {
@@ -457,6 +463,31 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void startNextActivity() {
+        Model_TaskMember taskMembers = new Model_TaskMember();
+        taskMembers.setDateOfExecutionFact(new Date());
+        taskMembers.setDateOfCommencementFact(new Date());
+        taskMembers.setInitiatorBP(FTA.getUser());
+        String initialStatusBP = getResources().getString(R.string.InitialStatusBP);
+        taskMembers.setStateTask(initialStatusBP);
+        Model_TaskListFields[] MTLF = new Model_TaskListFields[2];
+        MTLF[0] = new Model_TaskListFields();
+
+        int position = (Integer) expListView.findViewById(R.id.listOutletName).getTag();
+        Object object = listAdapter.getItem(position);
+        final ModelSearchedOutlets dataModel = (ModelSearchedOutlets) object;
+        MTLF[0].setKey("Торговая точка");
+        MTLF[0].setValue(dataModel.getName());
+
+        MTLF[1] = new Model_TaskListFields();
+        MTLF[1].setKey("OutletGUID");
+        MTLF[1].setValue(dataModel.getGUID());
+
+        taskMembers.setmTaskListFields(MTLF);
+
+        FTA.setTaskMember(taskMembers);
+        this.finish();
+        Intent intent = new Intent(getApplicationContext(), FormActivity.class);
+        startActivity(intent);
     }
 
     private Runnable TimerResult = new Runnable() {
@@ -465,7 +496,7 @@ public class SearchActivity extends AppCompatActivity {
             Calendar c = Calendar.getInstance();
             long millisecond_updated = c.getTimeInMillis();
             if (!InputValues[1].equals(InputValues[0])) {
-                if (millisecond_updated > (millisecond + 2000)) {
+                if (millisecond_updated > (millisecond + 1500)) {
                     ModelSearchOutletRequest MSOR = new ModelSearchOutletRequest();
                     MSOR.setCount("10");
                     MSOR.setWord("%" + actv.getText().toString() + "%");
