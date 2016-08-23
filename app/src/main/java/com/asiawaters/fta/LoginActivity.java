@@ -143,12 +143,13 @@ public class LoginActivity extends AppCompatActivity {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, +1);
         FA.setDateFrom(new Date(c.getTimeInMillis()));
         et = (EditText) findViewById(R.id.DataFrom);
         et.setText(sdf.format(FA.getDateFrom()));
 
         EditText et1;
-        c.add(Calendar.DATE, -50);
+        c.add(Calendar.DATE, -51);
         FA.setDateTo(new Date(c.getTimeInMillis()));
         et1 = (EditText) findViewById(R.id.DateTo);
         et1.setText(sdf.format(FA.getDateTo()));

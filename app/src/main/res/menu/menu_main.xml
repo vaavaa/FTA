@@ -14,4 +14,10 @@
         android:title="@string/desc"
         android:icon="@drawable/ic_sort_desc"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_Update"
+        android:orderInCategory="120"
+        android:title="@string/update"
+        android:icon="@drawable/update_tasks"
+        app:showAsAction="always" />
 </menu>

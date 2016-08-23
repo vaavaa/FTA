@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -32,16 +31,7 @@ import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     private Model_Person mp;
@@ -51,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Model_ListMembers> listData;
     private FTA FTA;
     private AsyncTask AT;
-
+    private android.os.Handler TimerHandler = new android.os.Handler();
+    private boolean TaskIsRunning;
     private String WDSLPath;
 
     @Override
@@ -89,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 runUpdateView();
             }
         }
+        TimerHandler.postDelayed(TimerResult, 300000);
     }
 
     public void searchVoid(View v) {
@@ -329,17 +321,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         protected void onPreExecute() {
-            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.Updating));
-            this.dialog.show();
-            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    AT.cancel(true);
-                    closeApp();
-                }
-            });
-
-
+//            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.Updating));
+//            this.dialog.show();
+//            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+//                @Override
+//                public void onCancel(DialogInterface dialog) {
+//                    AT.cancel(true);
+//                    closeApp();
+//                }
+//            });
         }
 
 
@@ -348,7 +338,7 @@ public class MainActivity extends AppCompatActivity {
             boolean auth = doLogin("", "", mp.getPerson_guid());
             System.out.println(auth);
 
-            return auth;// don't interact with the ui!
+            return auth;
         }
 
 
@@ -369,4 +359,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    private Runnable TimerResult = new Runnable() {
+        @Override
+        public void run() {
+            TaskIsRunning = true;
+
+            AT = new LoginTask().execute();
+            TimerHandler.postDelayed(this, 300000);
+        }
+    };
 }

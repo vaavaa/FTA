@@ -58,7 +58,19 @@
                 android:lines="3"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:layout_marginBottom="2dp"
                 android:background="@drawable/welcome_box_white_edit"/>
+
+            <TextView
+                android:id="@+id/search_search_agent"
+                android:layout_below="@+id/search_search_address"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:lines="1"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:background="@drawable/welcome_box_white_edit"
+                android:textColor="@color/colorPrimaryDark"/>
         </RelativeLayout>
 
 

@@ -26,11 +26,9 @@ import android.widget.Toast;
 import com.asiawaters.fta.classes.ModelRegions;
 import com.asiawaters.fta.classes.ModelSearchOutletRequest;
 import com.asiawaters.fta.classes.ModelSearchedOutlets;
-import com.asiawaters.fta.classes.Model_ListMembers;
 import com.asiawaters.fta.classes.Model_TaskListFields;
 import com.asiawaters.fta.classes.Model_TaskMember;
 import com.asiawaters.fta.classes.OutletListAdapter;
-import com.asiawaters.fta.classes.TaskListAdapter;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -39,13 +37,9 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.net.SocketException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -98,6 +92,9 @@ public class SearchActivity extends AppCompatActivity {
                 ModelSearchedOutlets MSO = (ModelSearchedOutlets) adapterView.getItemAtPosition(position);
                 actv.setText(MSO.getName());
                 ((TextView) findViewById(R.id.search_search_address)).setText(MSO.getAddress());
+                ((TextView) findViewById(R.id.search_search_agent)).setText(MSO.getAgentName());
+
+
                 prepareListData_(MSO);
                 SetAdapterForListOutlets();
             }
@@ -107,7 +104,6 @@ public class SearchActivity extends AppCompatActivity {
 
         actv.addTextChangedListener(new TextWatcher() {
 
-            private boolean shouldAutoComplete = true;
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -224,9 +220,12 @@ public class SearchActivity extends AppCompatActivity {
                 //Имя точки
                 if (pii.getProperty("Name").toString().equals("anyType{}")) MO.setName("");
                 else MO.setName(pii.getProperty("Name").toString());
-                //Адресс точки
+                //Адрес точки
                 if (pii.getProperty("Address").toString().equals("anyType{}")) MO.setAddress("");
                 else MO.setAddress(pii.getProperty("Address").toString());
+                //Имя Агента
+                if (pii.getProperty("Agent").toString().equals("anyType{}")) MO.setAgentName("");
+                else MO.setAgentName(pii.getProperty("Agent").toString());
                 lms[i] = MO;
             }
         }
@@ -469,7 +468,7 @@ public class SearchActivity extends AppCompatActivity {
         taskMembers.setInitiatorBP(FTA.getUser());
         String initialStatusBP = getResources().getString(R.string.InitialStatusBP);
         taskMembers.setStateTask(initialStatusBP);
-        Model_TaskListFields[] MTLF = new Model_TaskListFields[2];
+        Model_TaskListFields[] MTLF = new Model_TaskListFields[3];
         MTLF[0] = new Model_TaskListFields();
 
         int position = (Integer) expListView.findViewById(R.id.listOutletName).getTag();
@@ -481,6 +480,10 @@ public class SearchActivity extends AppCompatActivity {
         MTLF[1] = new Model_TaskListFields();
         MTLF[1].setKey("OutletGUID");
         MTLF[1].setValue(dataModel.getGUID());
+
+        MTLF[2] = new Model_TaskListFields();
+        MTLF[2].setKey("Торговый агент");
+        MTLF[2].setValue(dataModel.getAgentName());
 
         taskMembers.setmTaskListFields(MTLF);
 

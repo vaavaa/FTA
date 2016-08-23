@@ -30,6 +30,7 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
     private static class ViewHolder {
         TextView Name;
         TextView Address;
+        TextView ListAgentName;
         LinearLayout list_row;
     }
 
@@ -83,6 +84,7 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
             convertView = inflater.inflate(R.layout.list_outlets_row_item, parent, false);
             viewHolder.Name = (TextView) convertView.findViewById(R.id.listOutletName);
             viewHolder.Address = (TextView) convertView.findViewById(R.id.listOutletAdress);
+            viewHolder.ListAgentName =(TextView) convertView.findViewById(R.id.AgentNameList);
             viewHolder.list_row = (LinearLayout) convertView;
 
             convertView.setTag(viewHolder);
@@ -93,7 +95,9 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
         lastPosition = position;
         viewHolder.Name.setText(dataModel.getName());
         viewHolder.Address.setText(dataModel.getAddress());
+        viewHolder.ListAgentName.setText(dataModel.getAgentName());
         viewHolder.Name.setTag(position);
+
         //Обработка на клик тут
         viewHolder.list_row.setOnClickListener(this);
         // Return the completed view to render on screen

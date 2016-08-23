@@ -2,18 +2,21 @@ package com.asiawaters.fta;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.asiawaters.fta.classes.DatePickerFragment;
@@ -31,7 +34,6 @@ import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 public class FormActivity extends AppCompatActivity {
@@ -41,6 +43,7 @@ public class FormActivity extends AppCompatActivity {
     String[] items = new String[]{""};
     private DatePickerFragment newFragment;
     private View clickedView;
+    private boolean lock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,25 +82,36 @@ public class FormActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (lock) menu.getItem(0).setEnabled(false);
+        else menu.getItem(0).setEnabled(true);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_send) {
             if (SendToServerCheck()) {
                 Model_NewTask MNT = new Model_NewTask();
-                MNT.setComment(((EditText) findViewById(R.id.task_description)).getText().toString());
+                EditText td = ((EditText) findViewById(R.id.task_description));
+                MNT.setComment(td.getText().toString());
                 MNT.setIDAuthor(FTA.getPerson().getPerson_guid());
                 MNT.setIDTradePoint(getValueByKey("OutletGUID"));
                 SimpleDateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
                 SimpleDateFormat date_format_SOAP = new SimpleDateFormat("yyyy-MM-dd");
                 String datesource = ((EditText) findViewById(R.id.deadline_field)).getText().toString();
-                String newDate_format="";
+                String newDate_format = "";
                 try {
                     Date dta = date_format.parse(datesource);
                     newDate_format = date_format_SOAP.format(dta);
+                } catch (ParseException ex) {
                 }
-                catch (ParseException ex) {}
                 MNT.setTheTermOfTheTask(newDate_format);
                 FTA.setMNT(MNT);
+                //Hide Keyboard
+                InputMethodManager imm = (InputMethodManager) getSystemService(getBaseContext().INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(td.getWindowToken(), 0);
                 new CreateTask().execute();
             }
             return true;
@@ -147,9 +161,15 @@ public class FormActivity extends AppCompatActivity {
     public void previousActivity() {
         this.finish();
         Intent intent;
-        intent = new Intent(getApplicationContext(), MainActivity.class);
+
+        if (FTA.getTaskGuid() != null) {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), SearchActivity.class);
+        }
         startActivity(intent);
     }
+
 
     private String getValueByKey(String Key) {
         String value = "";
@@ -273,6 +293,7 @@ public class FormActivity extends AppCompatActivity {
     public Model_TaskMember RetrieveFromSoap(SoapObject soap) {
         int ii = 0;
         int i0 = 0;
+        int im = 0;
         SimpleDateFormat date_format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Model_TaskMember[] tms = new Model_TaskMember[soap.getPropertyCount()];
         Model_TaskMember taskMembers = new Model_TaskMember();
@@ -282,15 +303,20 @@ public class FormActivity extends AppCompatActivity {
                 case "List":
                     ii++;
                     break;
+                case "ImageArray":
+                    if (!soap.getProperty(i).toString().equals("anyType{Image=null; }")) im++;
+                    break;
                 case "Events":
                     i0++;
                     break;
             }
         }
         Model_TaskListFields[] tfls = new Model_TaskListFields[ii];
+        Model_TaskListFields[] IFlds = new Model_TaskListFields[im];
         items = new String[i0];
         ii = 0;
         i0 = 0;
+        im = 0;
 
         for (int i = 0; i < tms.length; i++) {
             switch (soap.getPropertyInfo(i).getName()) {
@@ -353,6 +379,16 @@ public class FormActivity extends AppCompatActivity {
                     items[i0] = l0.getProperty(0).toString();
                     i0++;
                     break;
+                case "ImageArray":
+                    SoapObject l1 = (SoapObject) (soap.getProperty(i));
+                    if (l1.getProperty(0) != null) {
+                        Vle = l1.getProperty(0).toString();
+                        IFlds[im] = new Model_TaskListFields();
+                        IFlds[im].setKey("Image_" + im);
+                        IFlds[im].setValue(Vle);
+                        im++;
+                    }
+                    break;
                 case "List":
                     SoapObject l2 = (SoapObject) (soap.getProperty(i));
                     tfls[ii] = new Model_TaskListFields();
@@ -365,6 +401,7 @@ public class FormActivity extends AppCompatActivity {
             }
         }
         taskMembers.setmTaskListFields(tfls);
+        taskMembers.setmTaskListImages(IFlds);
         return taskMembers;
     }
 
@@ -393,15 +430,17 @@ public class FormActivity extends AppCompatActivity {
 
     }
 
-    public void setUILock(boolean lock) {
-        if (lock) {
-            ((ImageView) findViewById(R.id.dtaPikerF)).setEnabled(false);
+    public void setUILock(boolean uiLock) {
+        lock = uiLock;
+        if (uiLock) {
+            findViewById(R.id.dtaPikerF).setEnabled(false);
         } else {
-            ((ImageView) findViewById(R.id.dtaPikerF)).setEnabled(true);
-            ((EditText) findViewById(R.id.task_description)).setFocusable(true);
-            ((EditText) findViewById(R.id.task_description)).setClickable(true);
+            findViewById(R.id.dtaPikerF).setEnabled(true);
+            findViewById(R.id.task_description).setFocusable(true);
+            findViewById(R.id.task_description).setClickable(true);
             ((EditText) findViewById(R.id.task_description)).setCursorVisible(true);
-            ((EditText) findViewById(R.id.task_description)).setFocusableInTouchMode(true);
+            findViewById(R.id.task_description).setFocusableInTouchMode(true);
+
         }
     }
 
@@ -436,12 +475,32 @@ public class FormActivity extends AppCompatActivity {
         et = (EditText) findViewById(R.id.AgentComments);
         et.setText(getValueByKey("Комментарий").toString());
 
-        et = (EditText) findViewById(R.id.AgentComments);
-        et.setText(getValueByKey("Комментарий").toString());
-
         et = (EditText) findViewById(R.id.initialdate);
         et.setText(date_format.format(taskMembers.getDateOfCommencementFact()));
 
+        if (taskMembers.getmTaskListImages() != null) {
+            LinearLayout ll = (LinearLayout) findViewById(R.id.linear);
+            for (Model_TaskListFields ifield : taskMembers.getmTaskListImages()) {
+                if (ifield != null) {
+                    final String fstring_key = ifield.getKey();
+                    ImageView IM = new ImageView(getBaseContext());
+                    byte[] decodedString = Base64.decode(ifield.getValue(), Base64.DEFAULT);
+                    final Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    Bitmap resized = Bitmap.createScaledBitmap(decodedByte, 450, 450, true);
+                    IM.setImageBitmap(resized);
+                    IM.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FTA.setImageToShow(decodedByte);
+                            Intent intent;
+                            intent = new Intent(getApplicationContext(), TouchImageViewActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+                    ll.addView(IM);
+                }
+            }
+        }
     }
 
     private class LoginTask extends AsyncTask<Void, Void, Void> {
@@ -484,7 +543,7 @@ public class FormActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
 
-            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingTask));
+            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.SendingTask));
             this.dialog.show();
 
         }
@@ -493,16 +552,20 @@ public class FormActivity extends AppCompatActivity {
         protected Boolean doInBackground(final Void... unused) {
 
             boolean auth = doNewTask();
-
             return auth;
         }
 
 
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Boolean result) {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
-                Toast.makeText(getBaseContext(), getBaseContext().getResources().getString(R.string.TasksSentOk), Toast.LENGTH_SHORT).show();
             }
+            if (result) {
+                Toast.makeText(getBaseContext(), getBaseContext().getResources().getString(R.string.TasksSentOk), Toast.LENGTH_SHORT).show();
+                previousActivity();
+            }
+
+
         }
 
     }

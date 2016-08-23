@@ -1,6 +1,7 @@
 package com.asiawaters.fta;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import com.asiawaters.fta.classes.DBController;
 import com.asiawaters.fta.classes.ModelRegions;
@@ -22,8 +23,6 @@ public class FTA extends Application {
     private String path_url = "http://ws.asiawaters.com/ast2/ws/Mobile";
     private DBController db;
     private int timeOut = 80000;
-    private int idGroup = -1;
-    private int idPosition = -1;
     private Date DateFrom;
     private Date DateTo;
     private Boolean UpdateList = false;
@@ -33,6 +32,15 @@ public class FTA extends Application {
     private ModelRegions[] ModelRegionsArray;
     private Model_TaskMember TaskMember;
     private Model_NewTask MNT;
+    private Bitmap ImageToShow;
+
+    public Bitmap getImageToShow() {
+        return ImageToShow;
+    }
+
+    public void setImageToShow(Bitmap imageToShow) {
+        ImageToShow = imageToShow;
+    }
 
     public Model_NewTask getMNT() {
         return MNT;
@@ -104,14 +112,6 @@ public class FTA extends Application {
 
     public void setDateTo(Date dateTo) {
         DateTo = dateTo;
-    }
-
-    public int getIdPosition() {
-        return idPosition;
-    }
-
-    public void setIdPosition(int idPosition) {
-        this.idPosition = idPosition;
     }
 
     public DBController getDb() {

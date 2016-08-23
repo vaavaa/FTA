@@ -20,6 +20,16 @@ public class Model_TaskMember {
     private String Status;
     private String Events;
     private Model_TaskListFields[] mTaskListFields;
+    private Model_TaskListFields[] mTaskListImages;
+
+    public Model_TaskListFields[] getmTaskListImages() {
+        return mTaskListImages;
+    }
+
+    public void setmTaskListImages(Model_TaskListFields[] mTaskListImages) {
+        this.mTaskListImages = mTaskListImages;
+    }
+
 
     public Model_TaskListFields[] getmTaskListFields() {
         return mTaskListFields;

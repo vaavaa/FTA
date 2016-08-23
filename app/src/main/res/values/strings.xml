@@ -27,6 +27,7 @@
     <string name="outlet_task_copy">New task based on selection</string>
     <string name="asc">Asc</string>
     <string name="desc">Desc</string>
+    <string name="update">Update task list</string>
     <string name="label_outlet_name">Outlet name:</string>
     <string name="label_agent_name">Agent name:</string>
     <string name="label_outlet_address">Outlet address:</string>
@@ -43,6 +44,7 @@
     <string name="Comments">Agent\'s comments</string>
     <string name="Pictures">Pictures</string>
     <string name="GetingTask">Geting task information</string>
+    <string name="SendingTask">Sending task information</string>
     <string name="NoTask">There is no value in task description.</string>
     <string name="NoCutOfDate">There is no value in cutoff date.</string>
     <string name="InvalidDate">Cutoff date needs to be higher then initial date</string>
@@ -54,5 +56,8 @@
     <string name="GetingRegions">Getting regions</string>
     <string name="CreateNewTask">NewTask</string>
     <string name="InitialStatusBP">Started</string>
+
+    <!-- TouchImageViewActivity-->
+    <string name="Activity_name">reView image</string>
 
 </resources>

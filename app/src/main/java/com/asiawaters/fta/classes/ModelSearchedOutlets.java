@@ -4,6 +4,15 @@ public class ModelSearchedOutlets {
     String GUID;
     String Name;
     String Address;
+    String AgentName;
+
+    public String getAgentName() {
+        return AgentName;
+    }
+
+    public void setAgentName(String agentName) {
+        AgentName = agentName;
+    }
 
     public String getGUID() {
         return GUID;
@@ -31,6 +40,6 @@ public class ModelSearchedOutlets {
 
     @Override
     public String toString() {
-        return Name+ "/" + Address;
+        return Name+ "/" + AgentName + "/"+Address;
     }
 }
