@@ -2,11 +2,11 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    android:id="@+id/coordinatorLayout"
     tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -32,34 +32,37 @@
         android:layout_gravity="right|bottom"
         android:layout_margin="8dp"
         android:src="@drawable/fab_add"
-        app:menu_labels_colorNormal="@color/app_primary"
-        app:menu_labels_colorPressed="@color/app_primary_pressed"
-        app:menu_labels_colorRipple="@color/app_ripple"
+        app:layout_behavior="com.asiawaters.fta.classes.FloatingActionMenuBehavior"
         app:menu_colorNormal="@color/app_primary"
         app:menu_colorPressed="@color/app_primary_pressed"
         app:menu_colorRipple="@color/app_ripple"
-        app:layout_behavior="com.asiawaters.fta.classes.FloatingActionMenuBehavior">
+        app:menu_labels_colorNormal="@color/app_primary"
+        app:menu_labels_colorPressed="@color/app_primary_pressed"
+        app:menu_labels_colorRipple="@color/app_ripple">
+
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_item0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="new_task"
             android:src="@drawable/find_outlet"
-            app:fab_size="mini"
-            app:fab_label="@string/find_outlet"
             app:fab_colorNormal="@color/app_primary"
             app:fab_colorPressed="@color/app_primary_pressed"
             app:fab_colorRipple="@color/app_ripple"
-            android:onClick="new_task"/>
+            app:fab_label="@string/find_outlet"
+            app:fab_size="mini" />
+
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/menu_item1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="new_task_on_selection"
             android:src="@drawable/outlet_task_copy"
-            app:fab_size="mini"
-            app:fab_label="@string/outlet_task_copy"
             app:fab_colorNormal="@color/app_primary"
             app:fab_colorPressed="@color/app_primary_pressed"
-            app:fab_colorRipple="@color/app_ripple" />
+            app:fab_colorRipple="@color/app_ripple"
+            app:fab_label="@string/outlet_task_copy"
+            app:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
 
 </android.support.design.widget.CoordinatorLayout>

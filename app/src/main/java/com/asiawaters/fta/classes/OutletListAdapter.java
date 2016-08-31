@@ -20,11 +20,13 @@ import com.asiawaters.fta.SearchActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implements View.OnClickListener {
 
     Context mContext;
     SearchActivity MA;
+    FTA fta;
 
     // View lookup cache
     private static class ViewHolder {
@@ -39,6 +41,7 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
         super(context, R.layout.list_outlets_row_item, data);
         this.mContext = context;
         this.MA = SearchActivity;
+        fta = ((com.asiawaters.fta.FTA)MA.getApplication());
     }
 
 
@@ -46,24 +49,48 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
     public void onClick(View v) {
         String open = getContext().getResources().getString(R.string.CreateNewTask);
 
-
+        v.setSelected(true);
         int position = (Integer) v.findViewById(R.id.listOutletName).getTag();
         Object object = getItem(position);
         final ModelSearchedOutlets dataModel = (ModelSearchedOutlets) object;
 
+        Model_TaskMember taskMembers = new Model_TaskMember();
+        taskMembers.setDateOfExecutionFact(new Date());
+        taskMembers.setDateOfCommencementFact(new Date());
+        taskMembers.setInitiatorBP(fta.getUser());
+        String initialStatusBP = MA.getResources().getString(R.string.InitialStatusBP);
+        taskMembers.setStateTask(initialStatusBP);
+        Model_TaskListFields[] MTLF = new Model_TaskListFields[3];
+        MTLF[0] = new Model_TaskListFields();
+
+        MTLF[0].setKey("Торговая точка");
+        MTLF[0].setValue(dataModel.getName());
+
+        MTLF[1] = new Model_TaskListFields();
+        MTLF[1].setKey("OutletGUID");
+        MTLF[1].setValue(dataModel.getGUID());
+
+        MTLF[2] = new Model_TaskListFields();
+        MTLF[2].setKey("Торговый агент");
+        MTLF[2].setValue(dataModel.getAgentName());
+
+        taskMembers.setmTaskListFields(MTLF);
+
+        fta.setTaskMember(taskMembers);
+
         View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CallNewTaskCration(dataModel.getGUID());
+                CallNewTaskCration();
             }
         };
-        Snackbar.make(v,dataModel.getName()+"/"+dataModel.getAddress(), Snackbar.LENGTH_LONG)
+        Snackbar.make(v, dataModel.getName() + "/" + dataModel.getAddress(), Snackbar.LENGTH_LONG)
                 .setAction(open, mOnClickListener)
                 .show();
     }
 
-    public void CallNewTaskCration(String Guid){
-        ((FTA)getContext().getApplicationContext()).setTaskGuid(Guid);
+    public void CallNewTaskCration() {
+        ((FTA) getContext().getApplicationContext()).setFormStatus(1);
         MA.startNextActivity();
     }
 
@@ -84,7 +111,7 @@ public class OutletListAdapter extends ArrayAdapter<ModelSearchedOutlets> implem
             convertView = inflater.inflate(R.layout.list_outlets_row_item, parent, false);
             viewHolder.Name = (TextView) convertView.findViewById(R.id.listOutletName);
             viewHolder.Address = (TextView) convertView.findViewById(R.id.listOutletAdress);
-            viewHolder.ListAgentName =(TextView) convertView.findViewById(R.id.AgentNameList);
+            viewHolder.ListAgentName = (TextView) convertView.findViewById(R.id.AgentNameList);
             viewHolder.list_row = (LinearLayout) convertView;
 
             convertView.setTag(viewHolder);

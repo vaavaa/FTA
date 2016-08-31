@@ -13,4 +13,5 @@
     <color name="app_primary_pressed">#388b22</color>
     <color name="app_ripple">#34801f</color>
     <color name="map_bg">#145de138</color>
+    <color name="map_bg_pressed">#365de138</color>
 </resources>

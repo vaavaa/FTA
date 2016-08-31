@@ -28,11 +28,46 @@ public class FTA extends Application {
     private Boolean UpdateList = false;
     private String user;
     private String password;
-    private String TaskGuid;
+    private Model_ListMembers TaskGuid;
     private ModelRegions[] ModelRegionsArray;
     private Model_TaskMember TaskMember;
     private Model_NewTask MNT;
     private Bitmap ImageToShow;
+    private int FormStatus;
+    private long RegionId = -1;
+    private String PickedTime;
+
+    public String getPickedTime() {
+        return PickedTime;
+    }
+
+    public void setPickedTime(String pickedTime) {
+        PickedTime = pickedTime;
+    }
+
+    public long getRegionId() {
+        return RegionId;
+    }
+
+    public void setRegionId(long regionId) {
+        RegionId = regionId;
+    }
+
+    public int getFormStatus() {
+        return FormStatus;
+    }
+
+    public void setFormStatus(int formStatus) {
+        FormStatus = formStatus;
+    }
+
+    public Model_ListMembers getTaskGuid() {
+        return TaskGuid;
+    }
+
+    public void setTaskGuid(Model_ListMembers taskGuid) {
+        TaskGuid = taskGuid;
+    }
 
     public Bitmap getImageToShow() {
         return ImageToShow;
@@ -66,13 +101,6 @@ public class FTA extends Application {
         ModelRegionsArray = modelRegionsArray;
     }
 
-    public String getTaskGuid() {
-        return TaskGuid;
-    }
-
-    public void setTaskGuid(String taskGuid) {
-        TaskGuid = taskGuid;
-    }
 
     public String getUser() {
         return user;

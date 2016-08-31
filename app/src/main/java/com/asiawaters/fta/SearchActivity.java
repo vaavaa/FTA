@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -26,9 +28,11 @@ import android.widget.Toast;
 import com.asiawaters.fta.classes.ModelRegions;
 import com.asiawaters.fta.classes.ModelSearchOutletRequest;
 import com.asiawaters.fta.classes.ModelSearchedOutlets;
+import com.asiawaters.fta.classes.Model_ListMembers;
 import com.asiawaters.fta.classes.Model_TaskListFields;
 import com.asiawaters.fta.classes.Model_TaskMember;
 import com.asiawaters.fta.classes.OutletListAdapter;
+import com.asiawaters.fta.classes.TaskListAdapter;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -39,6 +43,8 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 public class SearchActivity extends AppCompatActivity {
@@ -126,6 +132,9 @@ public class SearchActivity extends AppCompatActivity {
         if (FTA.getModelRegionsArray() != null) {
             ModelRegionsArr = FTA.getModelRegionsArray();
             SetAdapterForRegions();
+            if (FTA.getRegionId() == -1) {
+                FTA.setRegionId(0);
+            }else spnr.setSelection(Integer.parseInt(Long.toString(FTA.getRegionId())));
         } else {
             new UpdateRegionTask().execute();
         }
@@ -135,6 +144,7 @@ public class SearchActivity extends AppCompatActivity {
                     @Override
                     public void onItemSelected(AdapterView<?> arg0, View arg1,
                                                int arg2, long arg3) {
+                        FTA.setRegionId(arg0.getSelectedItemId());
                         actv.setEnabled(true);
                         IV1.setEnabled(true);
                     }
@@ -167,6 +177,47 @@ public class SearchActivity extends AppCompatActivity {
         return return_value;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_desc_search) {
+            sortList(1);
+            return true;
+        }
+        if (id == R.id.menu_asc_search) {
+            sortList(-1);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void sortList(int order) {
+        if (listAdapter != null) {
+            Collections.sort(listData, new TaskNameComparator(order));
+            listAdapter = new OutletListAdapter(listData, getBaseContext(), this);
+            expListView.setAdapter(listAdapter);
+        }
+    }
+
+    public class TaskNameComparator implements Comparator<ModelSearchedOutlets> {
+        private int mOrder;
+
+        public TaskNameComparator(int order) {
+            mOrder = order;
+        }
+
+        public int compare(ModelSearchedOutlets fst1, ModelSearchedOutlets scnd2) {
+            if (mOrder < 0) {
+                return fst1.getName().compareTo(scnd2.getName());
+            } else return scnd2.getName().compareTo(fst1.getName());
+        }
+    }
 
     public void search_void_Outlets(View v) {
         if (actv.getText().length() > 0) {
@@ -297,16 +348,9 @@ public class SearchActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
             this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingRegions));
+            this.dialog.setCancelable(false);
+            this.dialog.setCanceledOnTouchOutside(false);
             this.dialog.show();
-            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    //In case of progress cancel we exit from activity
-                    previousActivity();
-                }
-            });
-
-
         }
 
 
@@ -402,6 +446,8 @@ public class SearchActivity extends AppCompatActivity {
 
         protected void onPreExecute() {
             this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingOutlets));
+            this.dialog.setCancelable(false);
+            this.dialog.setCanceledOnTouchOutside(false);
             this.dialog.show();
         }
 
@@ -440,7 +486,10 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
+
+
     public void SetAdapterForListOutlets() {
+        if (ModelSearchedOutletsArr == null) return;
         prepareListData_();
         listAdapter = new OutletListAdapter(listData, getBaseContext(), this);
         // setting list adapter
@@ -462,32 +511,6 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void startNextActivity() {
-        Model_TaskMember taskMembers = new Model_TaskMember();
-        taskMembers.setDateOfExecutionFact(new Date());
-        taskMembers.setDateOfCommencementFact(new Date());
-        taskMembers.setInitiatorBP(FTA.getUser());
-        String initialStatusBP = getResources().getString(R.string.InitialStatusBP);
-        taskMembers.setStateTask(initialStatusBP);
-        Model_TaskListFields[] MTLF = new Model_TaskListFields[3];
-        MTLF[0] = new Model_TaskListFields();
-
-        int position = (Integer) expListView.findViewById(R.id.listOutletName).getTag();
-        Object object = listAdapter.getItem(position);
-        final ModelSearchedOutlets dataModel = (ModelSearchedOutlets) object;
-        MTLF[0].setKey("Торговая точка");
-        MTLF[0].setValue(dataModel.getName());
-
-        MTLF[1] = new Model_TaskListFields();
-        MTLF[1].setKey("OutletGUID");
-        MTLF[1].setValue(dataModel.getGUID());
-
-        MTLF[2] = new Model_TaskListFields();
-        MTLF[2].setKey("Торговый агент");
-        MTLF[2].setValue(dataModel.getAgentName());
-
-        taskMembers.setmTaskListFields(MTLF);
-
-        FTA.setTaskMember(taskMembers);
         this.finish();
         Intent intent = new Intent(getApplicationContext(), FormActivity.class);
         startActivity(intent);
@@ -512,7 +535,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             } else millisecond = millisecond_updated;
 
-            TimerHandler.postDelayed(this, 500);
+            TimerHandler.postDelayed(this, 1000);
         }
     };
 }

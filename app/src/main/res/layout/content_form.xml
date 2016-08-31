@@ -111,7 +111,8 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:textSize="18sp"
-                android:layout_weight="0.8"/>
+                android:layout_weight="0.8"
+                android:onClick="showDatePickerDialog"/>
 
             <ImageView
                 android:id="@+id/dtaPikerF"

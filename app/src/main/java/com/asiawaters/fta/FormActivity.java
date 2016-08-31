@@ -23,6 +23,7 @@ import com.asiawaters.fta.classes.DatePickerFragment;
 import com.asiawaters.fta.classes.Model_NewTask;
 import com.asiawaters.fta.classes.Model_TaskListFields;
 import com.asiawaters.fta.classes.Model_TaskMember;
+import com.asiawaters.fta.classes.TimePickerFragment;
 
 import org.ksoap2.HeaderProperty;
 import org.ksoap2.SoapEnvelope;
@@ -34,6 +35,7 @@ import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class FormActivity extends AppCompatActivity {
@@ -42,8 +44,12 @@ public class FormActivity extends AppCompatActivity {
     Model_TaskMember taskMembers;
     String[] items = new String[]{""};
     private DatePickerFragment newFragment;
+    private TimePickerFragment TimeFragment;
     private View clickedView;
     private boolean lock;
+    private int formstatus = 0;
+    private MenuItem menuItem;
+    private boolean SendingIsInProgress = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,18 +66,32 @@ public class FormActivity extends AppCompatActivity {
             }
         });
 
+
         FTA = ((com.asiawaters.fta.FTA) getApplication());
+
+        formstatus = FTA.getFormStatus();
+
         WDSLPath = FTA.getPath_url();
         taskMembers = FTA.getTaskMember();
-        if (taskMembers != null) {
-            setUILock(false);
-            fillCommoninfo();
-        } else {
+        if (formstatus == 1) {
+            if (taskMembers != null) {
+                setUILock(false);
+                fillCommoninfo();
+            }
+        }
+        if (formstatus == 0) {
             if (FTA.getTaskGuid() != null) {
                 setUILock(true);
                 new LoginTask().execute();
             }
         }
+        if (formstatus == 2) {
+            if (taskMembers != null) {
+                setUILock(false);
+                fillCommoninfo();
+            }
+        }
+
     }
 
 
@@ -83,8 +103,9 @@ public class FormActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (lock) menu.getItem(0).setEnabled(false);
-        else menu.getItem(0).setEnabled(true);
+        menuItem = menu.getItem(0);
+        if (lock) menuItem.setVisible(false);
+        else menuItem.setVisible(true);
         return true;
     }
 
@@ -99,12 +120,15 @@ public class FormActivity extends AppCompatActivity {
                 MNT.setIDAuthor(FTA.getPerson().getPerson_guid());
                 MNT.setIDTradePoint(getValueByKey("OutletGUID"));
                 SimpleDateFormat date_format = new SimpleDateFormat("dd.MM.yyyy");
-                SimpleDateFormat date_format_SOAP = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat date_format_SOAP = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String datesource = ((EditText) findViewById(R.id.deadline_field)).getText().toString();
                 String newDate_format = "";
                 try {
                     Date dta = date_format.parse(datesource);
-                    newDate_format = date_format_SOAP.format(dta);
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(dta);
+                    c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),21,0,0);
+                    newDate_format = date_format_SOAP.format(new Date(c.getTimeInMillis()));
                 } catch (ParseException ex) {
                 }
                 MNT.setTheTermOfTheTask(newDate_format);
@@ -123,7 +147,9 @@ public class FormActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        previousActivity();
+        if (!SendingIsInProgress) {
+            previousActivity();
+        }
     }
 
     public Boolean SendToServerCheck() {
@@ -162,7 +188,7 @@ public class FormActivity extends AppCompatActivity {
         this.finish();
         Intent intent;
 
-        if (FTA.getTaskGuid() != null) {
+        if ((formstatus == 0) ||(formstatus == 2)) {
             intent = new Intent(getApplicationContext(), MainActivity.class);
         } else {
             intent = new Intent(getApplicationContext(), SearchActivity.class);
@@ -184,7 +210,20 @@ public class FormActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         EditText et = (EditText) findViewById(R.id.deadline_field);
         et.setText(sdf.format(Result));
+        //TimeFragment = new TimePickerFragment();
+        //TimeFragment.show(getFragmentManager(),"time_picker");
     }
+
+    public void runTimePickerCompliting(int hrs, int mints) {
+        Date Result = newFragment.getResultDate();
+        Calendar c = Calendar.getInstance();
+        c.setTime(Result);
+        c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),hrs,mints);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        EditText et = (EditText) findViewById(R.id.deadline_field);
+        et.setText(sdf.format(Result));
+    }
+
 
     private boolean doLogin() {
 
@@ -195,7 +234,7 @@ public class FormActivity extends AppCompatActivity {
         final String SOAP_ACTION = "Mobile/MobilePortType/GetStatusRequest";
         final String METHOD_NAME = "GetTask";
         SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
-        request.addProperty("GUIDTask", FTA.getTaskGuid());
+        request.addProperty("GUIDTask", FTA.getTaskGuid().getIDTask());
 
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER12);
         envelope.implicitTypes = true;
@@ -421,6 +460,7 @@ public class FormActivity extends AppCompatActivity {
         }
         switch (clickedView.getId()) {
             case R.id.dtaPikerF:
+            case R.id.deadline_field:
                 newFragment.setInitialDate(dte);
                 newFragment.setmActivity(this);
                 break;
@@ -434,7 +474,9 @@ public class FormActivity extends AppCompatActivity {
         lock = uiLock;
         if (uiLock) {
             findViewById(R.id.dtaPikerF).setEnabled(false);
+            findViewById(R.id.deadline_field).setEnabled(false);
         } else {
+            findViewById(R.id.deadline_field).setEnabled(true);
             findViewById(R.id.dtaPikerF).setEnabled(true);
             findViewById(R.id.task_description).setFocusable(true);
             findViewById(R.id.task_description).setClickable(true);
@@ -511,7 +553,10 @@ public class FormActivity extends AppCompatActivity {
         protected void onPreExecute() {
 
             this.dialog.setMessage(getBaseContext().getResources().getString(R.string.GetingTask));
+            this.dialog.setCanceledOnTouchOutside(false);
+            this.dialog.setCancelable(false);
             this.dialog.show();
+
 
         }
 
@@ -521,7 +566,7 @@ public class FormActivity extends AppCompatActivity {
             boolean auth = doLogin();
             System.out.println(auth);
 
-            return null;// don't interact with the ui!
+            return null;
         }
 
 
@@ -542,8 +587,11 @@ public class FormActivity extends AppCompatActivity {
                 FormActivity.this);
 
         protected void onPreExecute() {
-
+            SendingIsInProgress = true;
+            menuItem.setVisible(false);
             this.dialog.setMessage(getBaseContext().getResources().getString(R.string.SendingTask));
+            this.dialog.setCanceledOnTouchOutside(false);
+            this.dialog.setCancelable(false);
             this.dialog.show();
 
         }

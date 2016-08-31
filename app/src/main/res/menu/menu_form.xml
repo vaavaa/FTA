@@ -5,7 +5,7 @@
     <item
         android:id="@+id/menu_send"
         android:orderInCategory="110"
-        android:title="@string/asc"
+        android:title="@string/send"
         android:icon="@drawable/ic_content_send"
         app:showAsAction="always" />
 </menu>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,15 +54,18 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
     public void onClick(View v) {
         String open = getContext().getResources().getString(R.string.label_open);
 
+        v.setSelected(true);
 
         int position = (Integer) v.findViewById(R.id.taskname).getTag();
         Object object = getItem(position);
         final Model_ListMembers dataModel = (Model_ListMembers) object;
-
+        ((FTA)getContext().getApplicationContext()).setTaskGuid(dataModel);
+        ((FTA)getContext().getApplicationContext()).setFormStatus(2);
         View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                open_task(dataModel.getIDTask());
+                ((FTA)getContext().getApplicationContext()).setFormStatus(0);
+                open_task();
             }
         };
         Snackbar.make(v,dataModel.getTextProblem(), Snackbar.LENGTH_LONG)
@@ -69,8 +73,7 @@ public class TaskListAdapter extends ArrayAdapter<Model_ListMembers> implements 
                 .show();
     }
 
-    public void open_task(String Guid){
-        ((FTA)getContext().getApplicationContext()).setTaskGuid(Guid);
+    public void open_task(){
         MA.startNextActivity();
     }
 

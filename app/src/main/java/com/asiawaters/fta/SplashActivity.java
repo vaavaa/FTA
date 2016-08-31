@@ -35,6 +35,7 @@ public class SplashActivity extends Activity {
         model_netState.setUrl("");
 
         FTA = ((com.asiawaters.fta.FTA) getApplication());
+        if (FTA.getList_values()!=null) startMainActivity();
 
         mTimer = new Timer();
         mTimer.schedule(

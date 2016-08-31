@@ -1,0 +1,72 @@
+<resources>
+    <string name="app_name">Мобильные задачи</string>
+
+    <!-- LoginActivity -->
+    <string name="login">Логин не верен</string>
+    <string name="password">Пароль не верен</string>
+    <string name="WrongDate">Не верная дата. Формат даты: dd.MM.yyyy</string>
+    <string name="Internet_is_not_available">Интернет не доступен</string>
+    <string name="Connection_is_switched_off">Соединение с Интернетом отсутвует</string>
+    <string name="LoggingIn">Авторизация...</string>
+    <string name="Updating">Обновление...</string>
+    <string name="ServerIsNotResponding">Сервер не отвечает. Попробуйте еще раз.</string>
+    <string name="UserNotFind">Имя пользователя не найдено.</string>
+    <string name="prompt_login">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Входим</string>
+    <string name="Settings">Настройки</string>
+    <string name="action_sign_in_short">Входим</string>
+    <string name="SaveLogin">Сохранить пароль и логин</string>
+    <string name="dateFrom">Дата с</string>
+    <string name="dateTo">Дата по</string>
+    <string name="URL">Путь к серверу</string>
+
+    <!-- MainActivity -->
+    <string name="timeout">Время ответа сервера истекло</string>
+    <string name="find_outlet">Создать новую задачу</string>
+    <string name="outlet_task_copy">Создать задачу по шаблону</string>
+    <string name="asc">Возрастание</string>
+    <string name="desc">Убавание</string>
+    <string name="update">Обновляет список задач</string>
+    <string name="person_card">Информация</string>
+    <string name="label_outlet_name">Имя точки:</string>
+    <string name="label_agent_name">Имя агента:</string>
+    <string name="label_outlet_address">Адрес точки:</string>
+    <string name="label_open">Открыть</string>
+    <string name="title_activity_form">Задача</string>
+    <string name="SelectItem">Укажите строку задачи</string>
+    <string name="infoCardTitle">Информация о пользователе</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Сменить пользователя</string>
+
+    <!--FormActivity -->
+    <string name="LabelOutlet">Точка</string>
+    <string name="LabelAgent">Агент</string>
+    <string name="TargetDate">Контрольная дата</string>
+    <string name="InitialDate">Дата постановки</string>
+    <string name="TaskDescription">Описание задачи</string>
+    <string name="State">Статус задачи</string>
+    <string name="Comments">Комментарий агента</string>
+    <string name="Pictures">Фотографии >>> </string>
+    <string name="GetingTask">Получание задачи</string>
+    <string name="SendingTask">Отправка задачи</string>
+    <string name="NoTask">Введите описание задачи</string>
+    <string name="NoCutOfDate">Дата контроля должна быть указана</string>
+    <string name="InvalidDate">Дата контроля должа быть больша даты постановки</string>
+    <string name="TasksSentOk">Задача отправлена.</string>
+    <string name="send">Отправка на сервер</string>
+
+    <!--SearchActivity -->
+    <string name="Search">Поиск точки</string>
+    <string name="GetingOutlets">Получение точек из региона</string>
+    <string name="GetingRegions">Получение списка регионов</string>
+    <string name="CreateNewTask">Новая задача</string>
+    <string name="InitialStatusBP">Инициировано</string>
+
+    <!-- TouchImageViewActivity-->
+    <string name="Activity_name">Просмотр</string>
+    <string name="rotate_letf">Повернуть налево</string>
+    <string name="rotate_right">Повернуть на право</string>
+
+
+</resources>

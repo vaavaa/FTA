@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".FormActivity">
+    <item
+        android:id="@+id/rotateRight"
+        android:orderInCategory="110"
+        android:title="@string/rotate_right"
+        android:icon="@drawable/rotate_right_icon"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/rotateLeft"
+        android:orderInCategory="100"
+        android:title="@string/rotate_letf"
+        android:icon="@drawable/rotate_left_icon"
+        app:showAsAction="always" />
+</menu>

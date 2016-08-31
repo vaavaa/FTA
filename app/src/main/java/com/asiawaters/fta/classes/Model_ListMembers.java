@@ -12,6 +12,15 @@ public class Model_ListMembers {
     private String IDTask;
     private String TextProblem;
     private boolean done;
+    private String GUIDTT;
+
+    public String getGUIDTT() {
+        return GUIDTT;
+    }
+
+    public void setGUIDTT(String GUIDTT) {
+        this.GUIDTT = GUIDTT;
+    }
 
     public String getOutletName() {
         return OutletName;

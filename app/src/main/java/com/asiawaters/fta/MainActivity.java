@@ -1,5 +1,6 @@
 package com.asiawaters.fta;
 
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +18,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.asiawaters.fta.classes.InfoCardDialogFragment;
+import com.asiawaters.fta.classes.ModelSearchedOutlets;
 import com.asiawaters.fta.classes.Model_ListMembers;
 import com.asiawaters.fta.classes.Model_Person;
+import com.asiawaters.fta.classes.Model_TaskListFields;
+import com.asiawaters.fta.classes.Model_TaskMember;
 import com.asiawaters.fta.classes.TaskListAdapter;
 
 import org.ksoap2.HeaderProperty;
@@ -31,7 +36,12 @@ import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private Model_Person mp;
@@ -40,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView expListView;
     private ArrayList<Model_ListMembers> listData;
     private FTA FTA;
-    private AsyncTask AT;
+    private boolean HideDialog = false;
     private android.os.Handler TimerHandler = new android.os.Handler();
     private boolean TaskIsRunning;
     private String WDSLPath;
@@ -56,14 +66,6 @@ public class MainActivity extends AppCompatActivity {
         mp = FTA.getPerson();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                closeApp();
-            }
-        });
 
         WDSLPath = FTA.getPath_url();
         lst = FTA.getList_values();
@@ -71,27 +73,30 @@ public class MainActivity extends AppCompatActivity {
         // get the listview
         expListView = (ListView) findViewById(R.id.initial_list);
         if (lst == null) {
-            AT = new LoginTask().execute();
+            new LoginTask().execute();
         } else {
             if (FTA.getUpdateList()) {
-                AT = new LoginTask().execute();
+                new LoginTask().execute();
             } else {
                 FTA.setUpdateList(false);
                 runUpdateView();
             }
         }
-        TimerHandler.postDelayed(TimerResult, 300000);
+        TimerHandler.postDelayed(TimerResult, 250000);
     }
 
     public void searchVoid(View v) {
         //Hide Keyboard
         InputMethodManager imm = (InputMethodManager) getSystemService(getBaseContext().INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        prepareListData_();
         if (listAdapter != null) {
             EditText set = (EditText) findViewById(R.id.search);
-//            if (set.getText().toString().length() > 0)
-//              //  listAdapter.getFilter().filter(set.getText().toString());
-//            else listAdapter.getFilter().filter("");
+            if (set.getText().toString().length() > 0){
+                prepareListData_Search(set.getText().toString());}
+            else prepareListData_Search("");
+            listAdapter = new TaskListAdapter(listData, getBaseContext(), this);
+            expListView.setAdapter(listAdapter);
         }
     }
 
@@ -99,22 +104,18 @@ public class MainActivity extends AppCompatActivity {
         v.setSelected(true);
         findViewById(R.id.IV3).setSelected(false);
         if (lst != null) {
-//            prepareListData();
-//            listAdapter = new FAExpandableListAdapter(getBaseContext(), listDataHeader, listDataChild);
-//            // setting list adapter
-//            expListView.setAdapter(listAdapter);
-//            expListView.setOnScrollListener((AbsListView.OnScrollListener) listAdapter);
+            searchVoid(findViewById(R.id.search));
+            listAdapter = new TaskListAdapter(listData, getBaseContext(), this);
+            expListView.setAdapter(listAdapter);
         }
-
     }
 
     public void actionNeed(View v) {
         v.setSelected(true);
         findViewById(R.id.IV2).setSelected(false);
         if (lst != null) {
-            prepareListData_();
+            prepareListData_InProgress();
             listAdapter = new TaskListAdapter(listData, getBaseContext(), this);
-            // setting list adapter
             expListView.setAdapter(listAdapter);
         }
 
@@ -127,6 +128,38 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void new_task_on_selection(View v) {
+        if (FTA.getTaskGuid()!=null) {
+            Model_ListMembers dataModel = FTA.getTaskGuid();
+            Model_TaskMember taskMembers = new Model_TaskMember();
+            taskMembers.setDateOfExecutionFact(new Date());
+            taskMembers.setDateOfCommencementFact(new Date());
+            taskMembers.setInitiatorBP(FTA.getUser());
+            String initialStatusBP = getResources().getString(R.string.InitialStatusBP);
+            taskMembers.setStateTask(initialStatusBP);
+            Model_TaskListFields[] MTLF = new Model_TaskListFields[3];
+            MTLF[0] = new Model_TaskListFields();
+
+            MTLF[0].setKey("Торговая точка");
+            MTLF[0].setValue(dataModel.getOutletName());
+
+            MTLF[1] = new Model_TaskListFields();
+            MTLF[1].setKey("OutletGUID");
+            MTLF[1].setValue(dataModel.getGUIDTT());
+
+            MTLF[2] = new Model_TaskListFields();
+            MTLF[2].setKey("Торговый агент");
+            MTLF[2].setValue(dataModel.getOutletAgent());
+
+            taskMembers.setmTaskListFields(MTLF);
+            FTA.setTaskMember(taskMembers);
+            this.finish();
+            Intent intent = new Intent(getApplicationContext(), FormActivity.class);
+            startActivity(intent);
+        }
+        else Toast.makeText(MainActivity.this, getResources().getString(R.string.SelectItem), Toast.LENGTH_SHORT).show();
+    }
+
     public void prepareListData_() {
         if (lst == null) return;
         listData = new ArrayList<>();
@@ -134,6 +167,38 @@ public class MainActivity extends AppCompatActivity {
             listData.add(lst[i]);
         }
 
+    }
+
+    public void prepareListData_InProgress() {
+        if (listData == null) return;
+        if (lst == null) return;
+        ArrayList listData1 = new ArrayList<>();
+        for (int i = 0; i < listData.size(); i++) {
+            Model_ListMembers MLM = listData.get(i);
+            if (!MLM.isDone()) {
+                listData1.add(MLM);
+            }
+        }
+        listData = listData1;
+    }
+
+    public void prepareListData_Search(String filterString) {
+        if (listData == null) return;
+        if (lst == null) return;
+        if (filterString.length() == 0) return;
+        else {
+            ArrayList listData1 = new ArrayList<>();
+            for (int i = 0; i < listData.size(); i++) {
+                Model_ListMembers MLM = listData.get(i);
+                if (MLM.getTextProblem().toLowerCase().contains(filterString)) {
+                    listData1.add(MLM);
+                }else if (MLM.getOutletAgent().toLowerCase().contains(filterString)) {
+                    listData1.add(MLM);
+                }
+            }
+
+            listData = listData1;
+        }
     }
 
     public void startLogingActivity() {
@@ -146,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void runUpdateView() {
         FTA.setList_values(lst);
-        actionNeed(findViewById(R.id.IV3));
+        allShow(findViewById(R.id.IV2));
     }
 
     public void GetNextStep(int groupPosition, int position) {
@@ -189,8 +254,23 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.menu_Update) {
+            new LoginTask().execute();
+            return true;
+        }
+
+        if (id == R.id.menu_person_card) {
+            personCardShow();
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void personCardShow() {
+        DialogFragment newFragment = new InfoCardDialogFragment();
+        newFragment.show(getFragmentManager(), "person_card");
     }
 
     public void closeApp() {
@@ -205,11 +285,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void sortList(int order) {
         if (listAdapter != null) {
-            //listDataChild = sortMap(listDataChild, order);
-//            listAdapter.notifyDataSetChanged();
+            Collections.sort(listData, new TaskNameComparator(order));
+            listAdapter = new TaskListAdapter(listData, getBaseContext(), this);
+            expListView.setAdapter(listAdapter);
         }
     }
 
+    public class TaskNameComparator implements Comparator<Model_ListMembers> {
+        private int mOrder;
+
+        public TaskNameComparator(int order) {
+            mOrder = order;
+        }
+
+        public int compare(Model_ListMembers fst1, Model_ListMembers scnd2) {
+            if (mOrder < 0) {
+                return fst1.getTextProblem().compareTo(scnd2.getTextProblem());
+            } else return scnd2.getDeadline().compareTo(fst1.getDeadline());
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -307,6 +401,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 listMembers.setOutletAddress(pii.getProperty("Address").toString());
                 listMembers.setDone(Boolean.valueOf(pii.getProperty("done").toString()));
+                listMembers.setGUIDTT(pii.getProperty("GUID_TT").toString());
+
                 lms[i] = listMembers;
             }
         }
@@ -321,15 +417,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         protected void onPreExecute() {
-//            this.dialog.setMessage(getBaseContext().getResources().getString(R.string.Updating));
-//            this.dialog.show();
-//            this.dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-//                @Override
-//                public void onCancel(DialogInterface dialog) {
-//                    AT.cancel(true);
-//                    closeApp();
-//                }
-//            });
+            if (!HideDialog) {
+                this.dialog.setMessage(getBaseContext().getResources().getString(R.string.Updating));
+                this.dialog.setCancelable(false);
+                this.dialog.setCanceledOnTouchOutside(false);
+                this.dialog.show();
+            }
+
         }
 
 
@@ -348,14 +442,18 @@ public class MainActivity extends AppCompatActivity {
             if (this.dialog.isShowing()) {
                 this.dialog.dismiss();
             }
+            HideDialog = false;
             if (!result) {
                 Toast.makeText(getBaseContext(), R.string.timeout, Toast.LENGTH_SHORT).show();
-                startLogingActivity();
             } else if (lst != null) {
+                findViewById(R.id.search_row).setVisibility(View.VISIBLE);
                 FTA.setUpdateList(false);
                 runUpdateView();
                 sortList(-1);
+            } else {
+                findViewById(R.id.search_row).setVisibility(View.INVISIBLE);
             }
+
         }
 
     }
@@ -364,9 +462,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             TaskIsRunning = true;
-
-            AT = new LoginTask().execute();
-            TimerHandler.postDelayed(this, 300000);
+            HideDialog = true;
+            new LoginTask().execute();
+            TimerHandler.postDelayed(this, 250000);
         }
     };
 }

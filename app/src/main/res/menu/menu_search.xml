@@ -1,28 +1,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".SearchActivity">
     <item
-        android:id="@+id/menu_asc"
+        android:id="@+id/menu_asc_search"
         android:orderInCategory="110"
         android:title="@string/asc"
         android:icon="@drawable/ic_sort_asc"
         app:showAsAction="always" />
     <item
-        android:id="@+id/menu_desc"
+        android:id="@+id/menu_desc_search"
         android:orderInCategory="100"
         android:title="@string/desc"
         android:icon="@drawable/ic_sort_desc"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/menu_Update"
-        android:orderInCategory="120"
-        android:title="@string/update"
-        android:icon="@drawable/update_tasks"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/menu_person_card"
-        android:orderInCategory="130"
-        android:title="@string/person_card"
-        app:showAsAction="collapseActionView" />
 </menu>

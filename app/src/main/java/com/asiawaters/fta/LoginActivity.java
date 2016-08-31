@@ -24,6 +24,7 @@ import com.asiawaters.fta.classes.DatePickerFragment;
 import com.asiawaters.fta.classes.Model_NetState;
 import com.asiawaters.fta.classes.Model_Person;
 import com.asiawaters.fta.classes.NetListener;
+import com.asiawaters.fta.classes.m_settings;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 
 import org.ksoap2.HeaderProperty;
@@ -70,16 +71,12 @@ public class LoginActivity extends AppCompatActivity {
         db.openDB();
         FA.setDb(db);
 
-        // Set up the login form.
-        WDSLPath = FA.getPath_url();
+
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    EditText et = (EditText) findViewById(R.id.URLPath);
-                    if (et.getText().toString().length() > 0)
-                        FA.setPath_url(et.getText().toString());
                     new LoginTask().execute();
                     return true;
                 }
@@ -91,12 +88,29 @@ public class LoginActivity extends AppCompatActivity {
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                EditText et;
+                et = (EditText) findViewById(R.id.URLPath);
+                if (et.getText() == null) {
+                    Toast.makeText(LoginActivity.this, R.string.login, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                m_settings mset = new m_settings();
+                mset.setSettingsName("WSDL_path");
+                mset.setSettingsValue(et.getText().toString());
+                db.createNewSettings(mset);
+                FA.setPath_url(et.getText().toString());
+                // Set up the login form.
+                WDSLPath = FA.getPath_url();
+
                 if ((((TextView) findViewById(R.id.email)).getText() != null)) {
                     if (isLoginValid(((TextView) findViewById(R.id.email)).getText().toString())) {
                         if ((((TextView) findViewById(R.id.password)).getText() != null)) {
                             if (isPasswordValid(((TextView) findViewById(R.id.password)).getText().toString())) {
                                 FA.setUser(((TextView) findViewById(R.id.email)).getText().toString());
                                 FA.setPassword(((TextView) findViewById(R.id.password)).getText().toString());
+                                //Hide Keyboard
+                                InputMethodManager imm = (InputMethodManager) getSystemService(getBaseContext().INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                                 new LoginTask().execute();
                             } else
                                 Toast.makeText(LoginActivity.this, R.string.password, Toast.LENGTH_SHORT).show();
@@ -139,7 +153,10 @@ public class LoginActivity extends AppCompatActivity {
 
         EditText et;
         et = (EditText) findViewById(R.id.URLPath);
-        et.setText(FA.getPath_url());
+        if (db.getSettings("WSDL_path")!=null) {
+            et.setText(db.getSettings("WSDL_path").getSettingsValue());
+            FA.setPath_url(db.getSettings("WSDL_path").getSettingsValue());
+        }else et.setText(FA.getPath_url());
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
         Calendar c = Calendar.getInstance();
